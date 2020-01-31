@@ -40,9 +40,11 @@ dev.off()
 setwd("C:\\Users\\HDK\\Desktop\\Evolution\\Tasks\\Task_02")
 Data<-read.csv("http://jonsmitchell.com/code/plotFxn02b.R")
 source("http://jonsmitchell.com/code/plotFxn02b.R")
+#Question 1: The first two hypotheses are inappropriate for this data because we don't know how much he eats each day.
+#Question 2: We cannot interpret the graph because it is missing critical data points that can affect the data.
 unique(beren3$event)
-Naps<-which(beren[,"event"]=="nap")
-berenNaps<-beren[Naps,]
+Naps<-which(beren3[,"event"]=="nap")
+berenNaps<-beren3[Naps,]
 head(berenNaps)
-Naps<-which(beren$event=="nap")
+Naps<-which(beren3$event=="nap")
 beren4<-beren3[order(Naps),]
