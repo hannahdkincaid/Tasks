@@ -1,0 +1,100 @@
+setwd("C:\\Users\\HDK\\Desktop\\Evolution\\Tasks\\Task_06")
+
+?coalescent.plot()
+coalescent.plot()
+coalescent.plot(n=10,ngen=20)
+coalescent.plot(n=100,ngen=50)
+coalescent.plot(n=125,ngen=500)
+#N is used to modify the number alleles in the beginning of each simulation. I used 10,100, and 125.
+#It only took roughly 10 generations for the first of the alleles to reach fixation.
+#The average number of offspring is always 1.
+#Fitness plays no role in these simulations, only drift.
+#Yes
+
+install.packages("learnPopGen")
+library(learnPopGen)
+?learnPopGen
+
+install.packages("coala")
+library(coala)
+?coala
+
+install.packages("phytools")
+library(phytools)
+?phytools
+
+model<-coal_model(sample_size=5,loci_number=10,loci_length=500,ploidy=2)+
+feat_mutation(10)+
+feat_recombination(10)+
+sumstat_trees()+
+sumstat_nucleotide_div()
+
+stats<-simulate(model,nsim=1)
+
+Diversity<-stats$pi
+Diversity
+#The numbers are different because recombination causes variance.
+
+Nloci<-length(stats$trees)
+
+t1<-read.tree(text=stats$trees[[1]][1])
+plot(t1)
+axisPhylo()
+#The pedigree also shows the mates of the sample.
+
+Age1<-max(nodeHeights(t1))
+Age1
+
+t2<-read.tree(text=stats$trees[[2]][1])
+plot(t2)
+axisPhylo()
+
+Age2<-max(nodeHeights(t2))
+Age2
+#The SNP of this locus is 0.6040095 and the first one was 0.3198572.
+
+par(mfrow=c(1,2))
+plot(t1)
+axisPhylo()
+plot(t2)
+axisPhylo()
+#The trees are not the same.
+
+compare.chronograms(t1,t2)
+
+for(locus in 1:Nloci){
+ntrees<-length(stats$trees[[locus]])
+for(n in 1:ntrees){
+if(locus == 1 && n == 1){
+outPhy<-read.tree(text=stats$trees[[locus]][n])
+}
+else{
+outPhy<-ape:::c.phylo(outPhy,read.tree(text=stats$trees[[locus]][n]))
+}
+}
+}
+
+par(mfrow=c(1,1))
+densityTree(outPhy)
+
+for(locus in 1:Nloci){
+ntrees<-length(stats$trees[[locus]])
+for(n in 1:ntrees){
+if(locus == 2 && n == 1){
+outPhy<-read.tree(text=stats$trees[[locus]][n])
+}
+else{
+outPhy<-ape:::c.phylo(outPhy,read.tree(text=stats$trees[[locus]][n]))
+}
+}
+}
+
+model3<-coal_model(10.50)+
+feat_mutation(par_prior("theta",sample.int(100,1)))+
+sumstat_nucleotide_div()
+stats<-simulate(model3,nsim=40)
+
+mean_pi<-sapply(stats,function(x) mean(x$pi))
+theta<-sapply(stats,function(x) x$pars[["theta"]])
+
+#
