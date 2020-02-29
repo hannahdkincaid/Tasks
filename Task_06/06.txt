@@ -96,5 +96,3 @@ stats<-simulate(model3,nsim=40)
 
 mean_pi<-sapply(stats,function(x) mean(x$pi))
 theta<-sapply(stats,function(x) x$pars[["theta"]])
-
-#
